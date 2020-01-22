@@ -1,0 +1,8 @@
+{
+  "maxPoints": {
+    "Singolo": 100,
+    "Ambo": 250,
+    "Terno": 400,
+    "Quaterna": 600
+  }
+}
