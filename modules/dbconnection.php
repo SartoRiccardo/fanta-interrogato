@@ -60,6 +60,11 @@ function registerBet($user, $bet, $subject) {
 function canBet($user, $subject) {
   global $dbc;
 
+  $q = "SELECT betsOpen FROM Subject WHERE name=?";
+  $stmnt = $dbc->prepare($q);
+  $stmnt->execute(array($subject));
+  if(!$stmnt->fetch()["betsOpen"]) return false;
+
   $q = "SELECT MAX(date) AS mostrecent FROM Result WHERE subject=?";
   $stmnt = $dbc->prepare($q);
   $stmnt->execute(array($subject));
