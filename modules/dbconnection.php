@@ -12,7 +12,7 @@ function getLoggedIn($token) {
   */
   global $dbc;
 
-  $date = date("y.m.d h:i:s", time());
+  $date = date("y.m.d H:i:s", time());
   $q = "SELECT userlogged FROM Access WHERE expire>=? AND token=?";
   $stmnt = $dbc->prepare($q);
   $stmnt->execute(array($date, $token));
@@ -39,7 +39,7 @@ function generateToken($user, $duration) {
   for ($i=0; $i < $tokenLength; $i++) {
     $token .= $characters{rand(0, strlen($characters)-1)};
   }
-  $expire = date("y.m.d h:i:s", time()+$duration);
+  $expire = date("y.m.d H:i:s", time()+$duration);
 
   $q = "INSERT INTO Access VALUES(?, ?, ?)";
   $stmnt = $dbc->prepare($q);
@@ -51,7 +51,7 @@ function generateToken($user, $duration) {
 function registerBet($user, $bet, $subject) {
   global $dbc;
 
-  $now = date("y.m.d h:i:s", time());
+  $now = date("y.m.d H:i:s", time());
   $q = "INSERT INTO Bet VALUES(?, ?, ?, ?)";
   $stmnt = $dbc->prepare($q);
   $stmnt->execute(array($user, $bet, $subject, $now));
