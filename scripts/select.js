@@ -51,8 +51,8 @@ function setup() {
       }
     });
 
-    //makeContainers();
-    testReact();
+    makeContainers();
+    // testReact();
 
     $(document).ready(function(){
       $('.tabs').tabs();
@@ -106,7 +106,12 @@ function makeLogin() {
 function testReact() {
   const inside = document.getElementById("react-test");
   ReactDOM.render(
-    <BettingForm options={selectData.ING.students} subject={"ING"} betspots={4}/>,
+    <PointsKey
+      studentsLeft={25}
+      studentNumber={25}
+      betspots={4}
+      pointMap={maxPoints}
+    />,
     inside
   )
 }
@@ -129,229 +134,44 @@ function makeContent(subject) {
   ret.id = "tab-" + subject;
 
   if(canBet[subject]) {
-    /*
-    let form = document.createElement("FORM");
-    form.method = "post";
-    form.action = "submit.php";
-    ret.appendChild(form);
-
-    let hidden = document.createElement("INPUT");
-    hidden.type = "hidden";
-    hidden.name = "subject";
-    hidden.value = subject;
-    form.appendChild(hidden);
-
-    let selectContainer = document.createElement("DIV");
-    selectContainer.className = "row";
-    selectContainer.style.paddingTop = "20px";
-
-    let subjectBetters = [];
-    let subjectSelected = [];
-    for(let i = 0; i < selectData[subject]["betspots"]; i++) {
-      let selectColumn = document.createElement("DIV");
-      selectColumn.className = "input-field col m3 s12";
-      selectContainer.appendChild(selectColumn);
-      *
-
-      let selector = makeSelector(selectData[subject]["students"], "bet"+i);
-      selector.onchange = function() {
-        disableSelected(subject, i);
-      }
-      subjectBetters.push(selector);
-      subjectSelected.push(null);
-      selectColumn.appendChild(selector);
-
-      let label = document.createElement("LABEL");
-      label.innerHTML = "Vittima #" + (i+1);
-      selectColumn.appendChild(label)
-    }
-    betters[subject] = subjectBetters;
-    selectedIndexes[subject] = subjectSelected;
-    form.appendChild(selectContainer);
-
-    /*
-    let btnRow = document.createElement("DIV");
-    btnRow.className = "row";
-    form.appendChild(btnRow);
-
-    let btnCol = document.createElement("DIV");
-    btnCol.className = "col s12 center";
-    btnRow.appendChild(btnCol);
-
-    let btn = document.createElement("BUTTON");
-    btn.innerHTML = "Invia";
-    btn.className = "btn waves-effect waves-light btn-large";
-    btn.type = "submit";
-    btnCol.appendChild(btn);*/
+    ReactDOM.render(
+      <BettingForm
+        options={selectData[subject].students}
+        subject={subject}
+        betspots={selectData[subject].betspots}
+      />,
+      ret
+    );
 
     ReactDOM.render(<Divider />, ret);
   }
 
-  ret.appendChild(makePointsTable(subject));
+  ReactDOM.render(
+    <PointsKey
+      studentsLeft={25}
+      studentNumber={25}
+      betspots={4}
+      pointMap={maxPoints}
+    />,
+    ret
+  );
 
   ReactDOM.render(<Divider />, ret);
 
-  ReactDOM.render(
+  ReactDOM.render((
     <BetHistory
       subject={subject}
       columns={selectData[subject].betspots}
       bets={betHistory[subject]}
       results={resultHistory[subject]}
-    />,
-    ret
+    />
+    ), ret
   );
 
   return ret;
 }
 
-function makeSelector(options, name) {
-  /*
-  let ret = document.createElement("SELECT");
-  ret.name = name;
-
-  let optDefault = document.createElement("OPTION");
-  optDefault.innerHTML = "Scegli";
-  optDefault.value = 0;
-  optDefault.disabled = true;
-  optDefault.selected = true;
-  ret.add(optDefault);
-
-  for(let i = 0; i < options.length; i++) {
-    let o = document.createElement("OPTION");
-    o.innerHTML = options[i];
-    o.value = options[i];
-    ret.add(o);
-  }
-  */
-
-  return document.createElement("SELECT");
-}
-
-function makePointsTable(subject) {
-  let ret = document.createElement("DIV");
-  ret.className = "row";
-
-  let container = document.createElement("DIV");
-  container.className = "col s12";
-  ret.appendChild(container);
-
-  let title = document.createElement("H4");
-  title.innerHTML = "Legenda";
-  container.appendChild(title);
-
-  let table = document.createElement("TABLE");
-  table.className = "striped responsive-table";
-
-  let thead = document.createElement("THEAD");
-  thead.appendChild(makeTableRow(["Tipologia", "Punti"], true));
-  table.appendChild(thead);
-
-  let tbody = document.createElement("TBODY");
-  for (let i = 0; i < Object.keys(maxPoints).length; i++) {
-    let pointType = Object.keys(maxPoints)[i];
-
-    let studentsDone = 0;
-    for (let j = 0; j < Object.keys(resultHistory[subject]).length; j++) {
-      let date = Object.keys(resultHistory[subject])[j];
-      studentsDone += resultHistory[subject][date].length;
-    }
-    let studentsLeft = studentNumber - studentsDone;
-    let betSpots = selectData[subject]["betspots"];
-    let points = Math.floor((studentsLeft-betSpots) / (studentNumber-betSpots) * maxPoints[pointType]);
-    // (y-y0)/(y1-y0) = (x-x0)/(x-x1), formula inversa per y
-
-    let row = [pointType, points+"PT"];
-    tbody.appendChild(makeTableRow(row));
-  }
-  table.appendChild(tbody);
-  container.appendChild(table);
-
-  return ret;
-}
-
-function makeTableRow(rowContents, isHeader=false, greenRows=null) {
-  let row = document.createElement("TR");
-  for (let i = 0; i < rowContents.length; i++) {
-    let cell = document.createElement(isHeader ? "TH" : "TD");
-    cell.innerHTML = rowContents[i];
-    if(greenRows && greenRows[i]) cell.className = "green lighten-3";
-    row.appendChild(cell);
-  }
-  return row;
-}
-
-function makeBetsTable(subject) {
-  /*
-  let firstRow = ["Data"];
-  for (let i = 0; i < selectData[subject]["betspots"]; i++) {
-    firstRow.push("Victim #" + (i+1));
-  }
-  thead.appendChild(makeTableRow(firstRow, true));
-
-
-
-
-
-
-
-  let tbody = document.createElement("TBODY");
-  table.appendChild(tbody);
-  let subjectBets = betHistory[subject];
-  for (let i = 0; i < Object.keys(subjectBets).length; i++) {
-    let winRow = [false];
-    let betDay = Object.keys(subjectBets)[i];
-    let rowContents = [betDay.split(" ")[0]];
-
-    for (let j = 0; j < subjectBets[betDay].length; j++) {
-      rowContents.push(subjectBets[betDay][j]);
-    }
-
-    // Green cells
-    for (let j = 0; j < Object.keys(resultHistory[subject]).length; j++) {
-      let resultDay = Object.keys(resultHistory[subject])[j];
-      if(compareDates(resultDay, betDay) >= 0) {
-        for (let k = 0; k < subjectBets[betDay].length; k++) {
-          winRow.push(resultHistory[subject][resultDay].indexOf(subjectBets[betDay][k]) > -1);
-        }
-        break;
-      }
-    }
-    tbody.appendChild(makeTableRow(rowContents, false, winRow));
-  }
-  */
-
-  return document.createElement("br");
-}
-
-/* Listeners & functions */
-
-function disableSelected(subject, eventIndex) {
-  let subjectBetters = betters[subject];
-  let subjectSelected = selectedIndexes[subject];
-
-  /* Enable all current disabled indexes */
-  for(let i=0; i < subjectBetters.length; i++) {
-    for (let j=0; j<subjectSelected.length; j++) {
-      if(subjectSelected[j]) {
-        subjectBetters[i].options[subjectSelected[j]].disabled = false;
-      }
-    }
-  }
-
-  /* Disable updated disabled indexes */
-  subjectSelected[eventIndex] = subjectBetters[eventIndex].selectedIndex;
-  selectedIndexes[subject] = subjectSelected;
-  for(let i=0; i<subjectBetters.length; i++) {
-    for (let j=0; j<subjectSelected.length; j++) {
-      if(i == j) continue;
-      if(subjectSelected[j]) {
-        subjectBetters[i].options[subjectSelected[j]].disabled = true;
-      }
-    }
-  }
-
-  $('select').formSelect();
-}
+/* Functions */
 
 function compareDates(d1str, d2str) {
   let d1 = new Date(d1str.replace(" ", "T"));
