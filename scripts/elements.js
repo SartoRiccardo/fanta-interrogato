@@ -148,7 +148,7 @@ class Select extends React.Component {
 // Tables //
 
 class TableRow extends React.Component {
-  createCells() {
+  createCells = () => {
     let ret = [];
     for (let i = 0; i < this.props.content.length; i++) {
       let classname = "";
@@ -176,7 +176,7 @@ class TableRow extends React.Component {
 }
 
 class BetTable extends React.Component {
-  createHead() {
+  createHead = () => {
     let columns = this.props.columns;
     let row = ["Data"];
     for (let i = 0; i < columns; i++) {
@@ -185,7 +185,7 @@ class BetTable extends React.Component {
     return <TableRow content={row} isHeader="true"/>;
   }
 
-  createBody() {
+  createBody = () => {
     let ret = [];
 
     let bets = this.props.bets; // bets = subjectBets
@@ -239,6 +239,45 @@ class BetHistory extends React.Component {
           <h4>Puntate Precedenti</h4>
           <h6>Punti accumulati <b>{points}</b></h6>
           <BetTable columns={this.props.columns} bets={this.props.bets} results={this.props.results} />
+        </div>
+      </div>
+    );
+  }
+}
+
+class PointsKey extends React.Component {
+  createPointRows = () => {
+    let ret = [];
+
+    for (let i = 0; i < Object.keys(this.props.pointMap).length; i++) {
+      let pointType = Object.keys(this.props.pointMap)[i];
+
+      let points = Math.floor(  // (Y-Y0)/(Y1-Y0) = (X-X0)/(X1-X0)
+        (this.props.studentsLeft-this.props.betspots) /
+        (this.props.studentNumber-this.props.betspots) *
+        this.props.pointMap[pointType]
+      );
+
+      let row = [pointType, points+"PT"];
+      ret.push(<TableRow content={row} />);
+    }
+
+    return ret;
+  }
+
+  render() {
+    return (
+      <div className="row">
+        <div className="col s12">
+          <h4>Legenda</h4>
+          <table className="striped responsive-table">
+            <thead>
+              <TableRow content={["Tipologia", "Punti"]} isHeader />
+            </thead>
+            <tbody>
+              {this.createPointRows()}
+            </tbody>
+          </table>
         </div>
       </div>
     );
