@@ -1,4 +1,20 @@
 
+// Nav //
+
+class Tab extends React.Component {
+  render() {
+    return (
+      <div className="row">
+        <div className="col s12">
+          <ul className="tabs">
+            <li className="tab col s3"><a href={"#tab-" + this.props.subject}>{this.props.label}</a></li>
+          </ul>
+        </div>
+      </div>
+    );
+  }
+}
+
 // Forms //
 
 class Login extends React.Component {
