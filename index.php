@@ -29,8 +29,8 @@ if(isset($_SESSION["token"]) && getLoggedIn($_SESSION["token"])) {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
   <!-- Import the React, React-Dom and Babel libraries from unpkg -->
-  <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
   <script type="text/babel" src="scripts/components.js"></script>
