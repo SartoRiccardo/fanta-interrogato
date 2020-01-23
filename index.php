@@ -33,7 +33,7 @@ if(isset($_SESSION["token"]) && getLoggedIn($_SESSION["token"])) {
   <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <script type="text/babel" src="scripts/elements.js"></script>
+  <script type="text/babel" src="scripts/components.js"></script>
   <script type="text/babel" src="scripts/select.js"></script>
 
   <style media="screen">
