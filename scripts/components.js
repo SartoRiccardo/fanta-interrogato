@@ -34,7 +34,7 @@ class Login extends React.Component {
 
         <div className="row">
           <div className="col s12 center">
-            <button className="btn waves-effect waves-light btn-large" type="submit">Invia</button>
+            <button className="btn waves-effect waves-light btn-large" type="submit">Login</button>
           </div>
         </div>
       </form>
@@ -99,7 +99,10 @@ class BettingForm extends React.Component {
         </div>
         <div className="row">
           <div className="col s12 center">
-            <button type="submit" className="btn waves-effect waves-light btn-large">Invia</button>
+            <button type="submit" className="btn waves-effect waves-light btn-large">
+              Invia
+              <i class="material-icons right">send</i>
+            </button>
           </div>
         </div>
       </form>
