@@ -51,7 +51,8 @@ function setup() {
       }
     });
 
-    makeContainers();
+    //makeContainers();
+    testReact();
 
     $(document).ready(function(){
       $('.tabs').tabs();
@@ -98,66 +99,16 @@ function makeContainers() {
 }
 
 function makeLogin() {
-  let inside = document.getElementById("container");
+  const inside = document.getElementById("container");
+  ReactDOM.render(<Login />, inside);
+}
 
-  let form = document.createElement("FORM");
-  form.method = "post";
-  form.action = "login.php";
-  inside.appendChild(form);
-
-  // Input fields
-  let inputContainer = document.createElement("DIV");
-  inputContainer.className = "row";
-  inputContainer.style.paddingTop = "20px";
-  form.appendChild(inputContainer);
-
-  let btnUserCol = document.createElement("DIV");
-  btnUserCol.className = "input-field col s6";
-  inputContainer.appendChild(btnUserCol);
-
-  let userInput = document.createElement("INPUT");
-  userInput.id = "user-input";
-  userInput.className = "validate";
-  userInput.name = "user";
-  userInput.type = "text";
-  btnUserCol.appendChild(userInput);
-
-  let userInputLabel = document.createElement("LABEL");
-  userInputLabel.htmlFor = "user-input";
-  userInputLabel.innerHTML = "Username";
-  btnUserCol.appendChild(userInputLabel);
-
-  let btnPswdCol = document.createElement("DIV");
-  btnPswdCol.className = "input-field col s6";
-  inputContainer.appendChild(btnPswdCol);
-
-  let pswdInput = document.createElement("INPUT");
-  pswdInput.id = "pswd-input";
-  pswdInput.className = "validate";
-  pswdInput.name = "pswd";
-  pswdInput.type = "password";
-  btnPswdCol.appendChild(pswdInput);
-
-  let pswdInputLabel = document.createElement("LABEL");
-  pswdInputLabel.htmlFor = "pswd-input";
-  pswdInputLabel.innerHTML = "Password";
-  btnPswdCol.appendChild(pswdInputLabel);
-
-  // Submit
-
-  let btnRow = document.createElement("DIV");
-  btnRow.className = "row";
-  form.appendChild(btnRow);
-
-  let btnCol = document.createElement("DIV");
-  btnCol.className = "col s12 center";
-  btnRow.appendChild(btnCol);
-
-  let btn = document.createElement("BUTTON");
-  btn.innerHTML = "Invia";
-  btn.className = "btn waves-effect waves-light btn-large";
-  btn.type = "submit";
-  btnCol.appendChild(btn);
+function testReact() {
+  const inside = document.getElementById("react-test");
+  ReactDOM.render(
+    <BettingForm options={selectData.ING.students} subject={"ING"} betspots={4}/>,
+    inside
+  )
 }
 
 /* HTML */
@@ -178,6 +129,7 @@ function makeContent(subject) {
   ret.id = "tab-" + subject;
 
   if(canBet[subject]) {
+    /*
     let form = document.createElement("FORM");
     form.method = "post";
     form.action = "submit.php";
@@ -199,6 +151,7 @@ function makeContent(subject) {
       let selectColumn = document.createElement("DIV");
       selectColumn.className = "input-field col m3 s12";
       selectContainer.appendChild(selectColumn);
+      *
 
       let selector = makeSelector(selectData[subject]["students"], "bet"+i);
       selector.onchange = function() {
@@ -216,6 +169,7 @@ function makeContent(subject) {
     selectedIndexes[subject] = subjectSelected;
     form.appendChild(selectContainer);
 
+    /*
     let btnRow = document.createElement("DIV");
     btnRow.className = "row";
     form.appendChild(btnRow);
@@ -228,36 +182,30 @@ function makeContent(subject) {
     btn.innerHTML = "Invia";
     btn.className = "btn waves-effect waves-light btn-large";
     btn.type = "submit";
-    btnCol.appendChild(btn);
+    btnCol.appendChild(btn);*/
 
-    ret.appendChild(makeDivider());
-  }
-  else {
-    /*
-    let row = document.createElement("DIV");
-    row.className = "row";
-    row.style.paddingTop = "20px";
-    ret.appendChild(row);
-
-    let column = document.createElement("DIV");
-    column.className = "col s12 center";
-    row.appendChild(column);
-
-    let text = document.createElement("H4");
-    text.innerHTML = "Grazie per aver scommesso";
-    column.appendChild(text);
-    */
+    ReactDOM.render(<Divider />, ret);
   }
 
   ret.appendChild(makePointsTable(subject));
 
-  ret.appendChild(makeDivider());
-  ret.appendChild(makeBetsTable(subject));
+  ReactDOM.render(<Divider />, ret);
+
+  ReactDOM.render(
+    <BetHistory
+      subject={subject}
+      columns={selectData[subject].betspots}
+      bets={betHistory[subject]}
+      results={resultHistory[subject]}
+    />,
+    ret
+  );
 
   return ret;
 }
 
 function makeSelector(options, name) {
+  /*
   let ret = document.createElement("SELECT");
   ret.name = name;
 
@@ -274,14 +222,9 @@ function makeSelector(options, name) {
     o.value = options[i];
     ret.add(o);
   }
+  */
 
-  return ret;
-}
-
-function makeDivider() {
-  let ret = document.createElement("DIV");
-  ret.className = "divider";
-  return ret;
+  return document.createElement("SELECT");
 }
 
 function makePointsTable(subject) {
@@ -338,33 +281,18 @@ function makeTableRow(rowContents, isHeader=false, greenRows=null) {
 }
 
 function makeBetsTable(subject) {
-  let ret = document.createElement("DIV");
-  ret.className = "row";
-
-  let container = document.createElement("DIV");
-  container.className = "col s12";
-  ret.appendChild(container);
-
-  let title = document.createElement("H4");
-  title.innerHTML = "Puntate precedenti";
-  container.appendChild(title);
-
-  let points = 42;
-  let subtitle = document.createElement("H6");
-  subtitle.innerHTML = "Punti accumulati: <b>" + getPoints(subject, betHistory[subject], resultHistory[subject]) + "</b>";
-  container.appendChild(subtitle);
-
-  let table = document.createElement("TABLE");
-  table.className = "responsive-table centered striped";
-  container.appendChild(table);
-
-  let thead = document.createElement("THEAD");
-  table.appendChild(thead);
+  /*
   let firstRow = ["Data"];
   for (let i = 0; i < selectData[subject]["betspots"]; i++) {
     firstRow.push("Victim #" + (i+1));
   }
   thead.appendChild(makeTableRow(firstRow, true));
+
+
+
+
+
+
 
   let tbody = document.createElement("TBODY");
   table.appendChild(tbody);
@@ -390,8 +318,9 @@ function makeBetsTable(subject) {
     }
     tbody.appendChild(makeTableRow(rowContents, false, winRow));
   }
+  */
 
-  return ret;
+  return document.createElement("br");
 }
 
 /* Listeners & functions */
@@ -443,7 +372,7 @@ function getPoints(subject, bets, results) {
 
       // Nearest result date
       if(compareDates(resultDate, betDate) >= 0) {
-        let betSpots = selectData[subject]["betspots"];
+        let betSpots = selectData[subject].betspots;
         // Calculate points
         for (let k = 0; k <= j; k++) {
           let wins = getMatches(results[Object.keys(results)[k]], bets[Object.keys(bets)[i]]);
@@ -470,3 +399,5 @@ function getMatches(arr1, arr2) {
   }
   return ret;
 }
+
+setup();

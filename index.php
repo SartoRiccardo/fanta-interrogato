@@ -18,8 +18,6 @@ if(isset($_SESSION["token"]) && getLoggedIn($_SESSION["token"])) {
   <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <script type="text/javascript" src="scripts/select.js"></script>
-
   <!-- Jquery -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -30,42 +28,50 @@ if(isset($_SESSION["token"]) && getLoggedIn($_SESSION["token"])) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
+  <!-- Import the React, React-Dom and Babel libraries from unpkg -->
+  <script type="application/javascript" src="https://unpkg.com/react@16.0.0/umd/react.production.min.js"></script>
+  <script type="application/javascript" src="https://unpkg.com/react-dom@16.0.0/umd/react-dom.production.min.js"></script>
+  <script type="application/javascript" src="https://unpkg.com/babel-standalone@6.26.0/babel.js"></script>
+
+  <script type="text/babel" src="scripts/elements.js"></script>
+  <script type="text/babel" src="scripts/select.js"></script>
+
   <style media="screen">
-  .container {
-    margin: 0 auto;
-    max-width: 1280px;
-    width: 95%;
-    padding: 5px;
-  }
-  @media only screen and (min-width: 601px) {
     .container {
+      margin: 0 auto;
+      max-width: 1280px;
       width: 95%;
-      padding: 15px;
+      padding: 5px;
     }
-  }
-  @media only screen and (min-width: 993px) {
-    .container {
-      width: 95%;
-      padding: 15px;
+    @media only screen and (min-width: 601px) {
+      .container {
+        width: 95%;
+        padding: 15px;
+      }
     }
-  }
-  nav, .btn, .btn-large{
-    background-color: #673ab7 !important;
-  }
-  .tabs .tab a:focus, .tabs .tab a:focus.active{
-    background-color: rgba(154, 103, 234, 0.2);
-  }
-  .tabs .tab a:hover, .tabs .tab a.active,
-  .tabs .tab a{
-    color: #9a67ea !important;
-  }
-  .tabs .indicator{
-    background-color: #9a67ea !important;
-  }
+    @media only screen and (min-width: 993px) {
+      .container {
+        width: 95%;
+        padding: 15px;
+      }
+    }
+    nav, .btn, .btn-large{
+      background-color: #673ab7 !important;
+    }
+    .tabs .tab a:focus, .tabs .tab a:focus.active{
+      background-color: rgba(154, 103, 234, 0.2);
+    }
+    .tabs .tab a:hover, .tabs .tab a.active,
+    .tabs .tab a{
+      color: #9a67ea !important;
+    }
+    .tabs .indicator{
+      background-color: #9a67ea !important;
+    }
   </style>
 </head>
-<body onload="setup()" class="grey lighten-3">
 
+<body class="grey lighten-3">
   <div class="navbar-fixed">
     <nav>
       <div class="container" style="padding: 0px;">
@@ -87,10 +93,12 @@ if(isset($_SESSION["token"]) && getLoggedIn($_SESSION["token"])) {
     <div id="container">
     </div>
 
+    <div id="react-test">
+    </div>
+
     <footer>
       <p>&copy; 2020 - Sartori & Bragastini</p>
     </footer>
-    <!--<a href="login.php">Logga in</a>-->
 
   </div>
 </body>
