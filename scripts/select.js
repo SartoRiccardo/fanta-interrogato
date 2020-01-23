@@ -1,8 +1,4 @@
-let selectData, maxPoints, betHistory, canBet, resultHistory;
-let studentNumber;
-let betters, selectedIndexes;
-
-/* Setup Functions */
+let selectData, maxPoints, betHistory, canBet, resultHistory, studentNumber;
 
 function setup() {
   let loggedIn;
@@ -74,8 +70,6 @@ function ajax(data, func) {
 function makeContainers() {
   let inside = document.getElementById("container");
 
-  betters = [];
-  selectedIndexes = [];
   let tabs = [];
   for(let i = 0; i < Object.keys(selectData).length; i++) {
     let subject = Object.keys(selectData)[i];
@@ -94,32 +88,6 @@ function makeContainers() {
 function makeLogin() {
   const inside = document.getElementById("container");
   ReactDOM.render(<Login />, inside);
-}
-
-function testReact() {
-  const inside = document.getElementById("react-test");
-  ReactDOM.render(
-    <PointsKey
-      studentsLeft={25}
-      studentNumber={25}
-      betspots={4}
-      pointMap={maxPoints}
-    />,
-    inside
-  )
-}
-
-/* HTML */
-
-function makeTab(subject, label) {
-  let tab = document.createElement("LI");
-  tab.className = "tab col s3";
-  let tablink = document.createElement("A");
-  tablink.href = "#tab-" + subject;
-  tablink.innerHTML = label;
-
-  tab.appendChild(tablink);
-  return tab;
 }
 
 function makeContent(subject) {
@@ -166,7 +134,7 @@ function makeContent(subject) {
   return ret;
 }
 
-/* Functions */
+// Functions //
 
 function compareDates(d1str, d2str) {
   let d1 = new Date(d1str.replace(" ", "T"));

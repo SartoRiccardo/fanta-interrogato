@@ -93,9 +93,6 @@ if(isset($_SESSION["token"]) && getLoggedIn($_SESSION["token"])) {
     <div id="container">
     </div>
 
-    <div id="react-test">
-    </div>
-
     <footer>
       <p>&copy; 2020 - Sartori & Bragastini</p>
     </footer>
