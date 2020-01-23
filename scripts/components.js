@@ -92,7 +92,7 @@ class BettingForm extends React.Component {
 
   render() {
     return(
-      <form>
+      <form method="post" action="submit.php">
         <input type="hidden" name="subject" value={this.props.subject} />
         <div className="row" style={{paddingTop: "20px"}}>
           {this.createSelectors()}
@@ -118,14 +118,16 @@ class Select extends React.Component {
 
     this.state = {
       options: this.props.options.map(x => x),
-      selectedIndex: 0,
+      selectedIndex: -1,
     };
   }
 
   createOptions = () => {
     let ret = [];
     for(let i = 0; i < this.state.options.length; i++) {
-      let disabled = this.props.disabledOptions && this.props.disabledOptions.includes(i);
+      let disabled = this.props.disabledOptions &&
+        this.props.disabledOptions.includes(i) &&
+        i != this.state.selectedIndex;
       ret.push(
         <option value={this.state.options[i]} disabled={disabled}>
           {this.state.options[i]}
@@ -137,8 +139,6 @@ class Select extends React.Component {
   }
 
   onChangeEvent = (event) => {
-    let options = [...this.state.options];
-
     this.setState({
       selectedIndex: event.target.selectedIndex-1,
     }, () => {
@@ -152,8 +152,9 @@ class Select extends React.Component {
   }
 
   render() {
+    let selected = this.state.selectedIndex >= 0 ? this.state.options[this.state.selectedIndex] : "0";
     return(
-      <select name={this.props.name} onChange={(event) => {this.onChangeEvent(event)}} defaultValue="0">
+      <select name={this.props.name} onChange={this.onChangeEvent} value={selected}>
         <option value="0" disabled>Scegli</option>
         {this.createOptions()}
       </select>
