@@ -27,12 +27,31 @@ class Login extends React.Component {
 }
 
 class BettingForm extends React.Component {
-  createSelectors() {
+  constructor(props) {
+    super(props);
+
+    let selected = [];
+    for(let i = 0; i < this.props.betspots; i++) {
+      selected.push(null);
+    }
+
+    this.state = {
+      selected: selected,
+    };
+  }
+
+  createSelectors = () => {
     let ret = [];
     this.selectors = [];
-    this.selected = [];
     for (let i = 0; i < this.props.betspots; i++) {
-      let sel = <Select name={"bet"+i} options={this.props.options}/* onChange={() => {this.disableSelected(i)}}*/ />;
+      let sel = (
+        <Select
+          name={"bet"+i}
+          options={this.props.options}
+          onChange={evt => {this.disableSelected(evt, i)}}
+          disabledOptions={this.state.selected}
+        />
+      );
       ret.push((
         <div className="input-field col m3 s12">
           {sel}
@@ -40,36 +59,19 @@ class BettingForm extends React.Component {
         </div>
       ));
       this.selectors.push(sel);
-      this.selected.push(null);
     }
     return ret;
   }
 
-  disableSelected(eventIndex) {
-    // Enable all current disabled indexes //
-    for(let i=0; i < this.selectors.length; i++) {
-      for (let j=0; j<this.selected.length; j++) {
-        if(this.selected[j]) {
-          let optProps = this.selectors[i].props.getOption(this.selected[j]).props;
-          if("disabled" in optProps) delete optProps["disabled"];
-          this.selectors[i].props.getOption(this.selected[j]).props = optProps;
-        }
-      }
-    }
+  disableSelected = (evt, evtIndex) => {
+    let selected = [...this.state.selected];
+    selected[evtIndex] = evt.target.state.selectedIndex;
 
-    // Disable updated disabled indexes //
-    this.selected[eventIndex] = this.selectors[eventIndex].props.selectedIndex;
-    this.selected = this.selected;
-    for(let i = 0; i<this.selectors.length; i++) {
-      for (let j = 0; j<this.selected.length; j++) {
-        if(i == j) continue;
-        if(this.selected[j]) {
-          this.selectors[i].props.getOption(this.selected[j]).props.disabled = true;
-        }
-      }
-    }
-
-    $('select').formSelect();
+    this.setState({
+      selected: selected,
+    }, () => {
+      $('select').formSelect();
+    });
   }
 
   render() {
@@ -90,38 +92,53 @@ class BettingForm extends React.Component {
 }
 
 class Select extends React.Component {
-  createOptions() {
-    let ret = [];
-    this.props.selectedIndex = 0;
+  constructor(props) {
+    super(props);
+
+    let options = [];
     for (let i = 0; i < this.props.options.length; i++) {
-      ret.push(<option value={this.props.options[i]}>{this.props.options[i]}</option>);
+      options.push(this.props.options[i]);
     }
+
+    this.state = {
+      options: this.props.options.map(x => x),
+      selectedIndex: 0,
+    };
+  }
+
+  createOptions = () => {
+    let ret = [];
+    for(let i = 0; i < this.state.options.length; i++) {
+      let disabled = this.props.disabledOptions && this.props.disabledOptions.includes(i);
+      ret.push(
+        <option value={this.state.options[i]} disabled={disabled}>
+          {this.state.options[i]}
+        </option>
+      );
+    }
+
     return ret;
   }
 
-  onChangeEvent(event) {
-    this.props.selectedIndex = event.target.selectedIndex;
-  }
+  onChangeEvent = (event) => {
+    let options = [...this.state.options];
 
-  /*
-  getOption(i) {
-    console.log(this.options);
-    return this.options[i];
+    this.setState({
+      selectedIndex: event.target.selectedIndex-1,
+    }, () => {
+      if(this.props.onChange) {
+        this.props.onChange({
+          target: this,
+          event: event,
+        })
+      }
+    });
   }
-  */
 
   render() {
-    /*
-    this.options = [<option value="0" disabled selected>Scegli</option>];
-    this.options.push(...this.createOptions());
-    this.props.getOption = this.getOption;
-    */
-    let props = {
-      name: this.props.name
-    }
-    if(this.props.onChange) props.onChange = (event) => {this.onChangeEvent(event); this.props.onChange()};
     return(
-      <select {...props}>
+      <select name={this.props.name} onChange={(event) => {this.onChangeEvent(event)}} defaultValue="0">
+        <option value="0" disabled>Scegli</option>
         {this.createOptions()}
       </select>
     );
