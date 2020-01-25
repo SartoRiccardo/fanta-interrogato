@@ -1,4 +1,38 @@
 
+class SubjectContent extends React.Component {
+  render() {
+    const { selectData, maxPoints, betHistory, canBet, resultHistory, studentNumber, subject } = this.props;
+    let form = [];
+    if(canBet) form = [
+      <BettingForm
+        options={selectData.students}
+        subject={subject}
+        betspots={selectData.betspots}
+        key="0"
+      />,
+      <Divider key="1" />
+    ];
+    return (
+      <div id={"tab-" + subject}>
+        {form}
+        <PointsKey
+          studentsLeft={selectData.students.length}
+          studentNumber={studentNumber}
+          betspots={selectData.betspots}
+          pointMap={maxPoints}
+        />
+        <Divider />
+        <BetHistory
+          subject={subject}
+          columns={selectData.betspots}
+          bets={betHistory}
+          results={resultHistory}
+        />
+      </div>
+    )
+  }
+}
+
 // Nav //
 
 class Tab extends React.Component {
@@ -58,23 +92,18 @@ class BettingForm extends React.Component {
 
   createSelectors = () => {
     let ret = [];
-    this.selectors = [];
     for (let i = 0; i < this.props.betspots; i++) {
-      let sel = (
-        <Select
-          name={"bet"+i}
-          options={this.props.options}
-          onChange={evt => {this.disableSelected(evt, i)}}
-          disabledOptions={this.state.selected}
-        />
-      );
       ret.push((
-        <div className="input-field col m3 s12">
-          {sel}
+        <div className="input-field col m3 s12" key={i}>
+          <Select
+            name={"bet"+i}
+            options={this.props.options}
+            onChange={evt => {this.disableSelected(evt, i)}}
+            disabledOptions={this.state.selected}
+          />
           <label>Vittima #{i+1}</label>
         </div>
       ));
-      this.selectors.push(sel);
     }
     return ret;
   }
@@ -101,7 +130,7 @@ class BettingForm extends React.Component {
           <div className="col s12 center">
             <button type="submit" className="btn waves-effect waves-light btn-large">
               Invia
-              <i class="material-icons right">send</i>
+              <i className="material-icons right">send</i>
             </button>
           </div>
         </div>
@@ -132,7 +161,7 @@ class Select extends React.Component {
         this.props.disabledOptions.includes(i) &&
         i != this.state.selectedIndex;
       ret.push(
-        <option value={this.state.options[i]} disabled={disabled}>
+        <option value={this.state.options[i]} disabled={disabled} key={this.state.options[i]}>
           {this.state.options[i]}
         </option>
       );
@@ -177,9 +206,9 @@ class TableRow extends React.Component {
       }
 
       if(this.props.isHeader) {
-        ret.push(<th className={classname}>{this.props.content[i]}</th>);
+        ret.push(<th className={classname} key={this.props.content[i]}>{this.props.content[i]}</th>);
       } else {
-        ret.push(<td className={classname}>{this.props.content[i]}</td>);
+        ret.push(<td className={classname} key={this.props.content[i]}>{this.props.content[i]}</td>);
       }
     }
 
@@ -230,7 +259,7 @@ class BetTable extends React.Component {
         }
       }
 
-      ret.push(<TableRow content={rowContents} greenCols={winRow} />);
+      ret.push(<TableRow content={rowContents} greenCols={winRow} key={betDay} />);
     }
 
     return ret;
@@ -279,7 +308,7 @@ class PointsKey extends React.Component {
       );
 
       let row = [pointType, points+"PT"];
-      ret.push(<TableRow content={row} />);
+      ret.push(<TableRow content={row} key={pointType}/>);
     }
 
     return ret;

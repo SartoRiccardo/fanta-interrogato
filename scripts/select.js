@@ -48,7 +48,6 @@ function setup() {
     });
 
     makeContainers();
-    // testReact();
 
     $(document).ready(function(){
       $('.tabs').tabs();
@@ -75,10 +74,21 @@ function makeContainers() {
     let subject = Object.keys(selectData)[i];
 
     tabs.push(
-      <Tab subject={subject} label={subject} />
+      <Tab subject={subject} label={subject} key={subject} />
     );
 
-    inside.appendChild(makeContent(subject));
+    ReactDOM.render(
+      <SubjectContent
+        selectData={selectData[subject]}
+        betHistory={betHistory[subject]}
+        resultHistory={resultHistory[subject]}
+        maxPoints={maxPoints}
+        subject={subject}
+        canBet={canBet}
+        studentNumber={studentNumber}
+      />,
+      inside
+    );
   }
 
   let tabContainer = document.getElementById("tab-container");
@@ -88,50 +98,6 @@ function makeContainers() {
 function makeLogin() {
   const inside = document.getElementById("container");
   ReactDOM.render(<Login />, inside);
-}
-
-function makeContent(subject) {
-  let ret = document.createElement("DIV");
-  ret.id = "tab-" + subject;
-
-  let components = [];
-  if(canBet[subject]) {
-    components.push(
-      <BettingForm
-        options={selectData[subject].students}
-        subject={subject}
-        betspots={selectData[subject].betspots}
-      />,
-    );
-
-    components.push(<Divider />);
-  }
-
-  components.push(
-    <PointsKey
-      studentsLeft={25}
-      studentNumber={25}
-      betspots={4}
-      pointMap={maxPoints}
-    />
-  );
-
-  components.push(
-    <Divider />
-  );
-
-  components.push(
-    <BetHistory
-      subject={subject}
-      columns={selectData[subject].betspots}
-      bets={betHistory[subject]}
-      results={resultHistory[subject]}
-    />
-  );
-
-  ReactDOM.render(components, ret);
-
-  return ret;
 }
 
 // Functions //
