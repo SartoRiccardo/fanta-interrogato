@@ -67,17 +67,17 @@ function ajax(data, func) {
 }
 
 function makeContainers() {
-  let inside = document.getElementById("container");
-
   let tabs = [];
+  let content = [];
   for(let i = 0; i < Object.keys(selectData).length; i++) {
     let subject = Object.keys(selectData)[i];
 
-    tabs.push(
-      <Tab subject={subject} label={subject} key={subject} />
-    );
+    tabs.push({
+      subject: subject,
+      label: subject,
+    });
 
-    ReactDOM.render(
+    content.push(
       <SubjectContent
         selectData={selectData[subject]}
         betHistory={betHistory[subject]}
@@ -86,13 +86,19 @@ function makeContainers() {
         subject={subject}
         canBet={canBet}
         studentNumber={studentNumber}
-      />,
-      inside
+        key={subject}
+      />
     );
   }
 
   let tabContainer = document.getElementById("tab-container");
-  ReactDOM.render(tabs, tabContainer);
+  ReactDOM.render(
+    <Navbar subjects={tabs} />,
+    tabContainer
+  );
+
+  let inside = document.getElementById("container");
+  ReactDOM.render(content, inside);
 }
 
 function makeLogin() {

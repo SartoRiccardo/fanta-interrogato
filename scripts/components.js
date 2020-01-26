@@ -35,13 +35,21 @@ class SubjectContent extends React.Component {
 
 // Nav //
 
-class Tab extends React.Component {
+class Navbar extends React.Component {
   render() {
+    const tabs = this.props.subjects.map(t => {
+      return(
+        <li className="tab col s3" key={t.subject}>
+          <a href={"#tab-" + t.subject}>{t.label}</a>
+        </li>
+      );
+    });
+
     return (
       <div className="row">
         <div className="col s12">
           <ul className="tabs">
-            <li className="tab col s3"><a href={"#tab-" + this.props.subject}>{this.props.label}</a></li>
+            {tabs}
           </ul>
         </div>
       </div>
