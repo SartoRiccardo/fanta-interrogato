@@ -8,6 +8,10 @@ $loggedUser = false;
 if(isset($_SESSION["token"]) && getLoggedIn($_SESSION["token"])) {
   $loggedUser = getLoggedIn($_SESSION["token"]);
 }
+if(!$loggedUser) {
+  header("Location: index.php");
+  die();
+}
 ?>
 
 <!DOCTYPE html>
