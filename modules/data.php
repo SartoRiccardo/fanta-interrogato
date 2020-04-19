@@ -1,9 +1,7 @@
 <?php
 include "dbconnection.php";
 session_start();
-?>
 
-<?php
 function getSelectOptions() {
   $ret = array();
 
@@ -17,9 +15,7 @@ function getSelectOptions() {
 
   return $ret;
 }
-?>
 
-<?php
 $request = explode("=", file_get_contents("php://input"))[1];
 header("Content-Type: application/json");
 switch ($request) {
@@ -70,8 +66,7 @@ switch ($request) {
     echo isset($_SESSION["token"]) && getLoggedIn($_SESSION["token"]) ? "true" : "false";
     break;
 
-  /*default:
-  header("Location: ../");
-  die();*/
+  case "totalResults":
+    echo getStudentPoints();
+    break;
 }
-?>

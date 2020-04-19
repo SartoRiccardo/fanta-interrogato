@@ -105,7 +105,7 @@ function getSubjects() {
 
   $q = "SELECT name FROM Subject";
   $stmnt = $dbc->prepare($q);
-  $stmnt->execute(array($subject));
+  $stmnt->execute();
 
   $ret = array();
   while (($name = $stmnt->fetch()["name"])) {
@@ -190,10 +190,112 @@ function getResultHistory($subject) {
 }
 
 function registerResult($student, $subject, $hour) {
-  $now = date("y.m.d ", time()) . str_pad($hour, 2, '0', STR_PAD_LEFT) . ":00:00";
+  global $dbc;
 
-  $q = "INSERT INTO Result VALUES (?, ?, ?)";
+  $q = "INSERT INTO Result VALUES (?, CURRENT_TIMESTAMP, ?)";
   $stmnt = $dbc->prepare($q);
-  $stmnt->execute(array($student, $hour, $subject));
+  $stmnt->execute(array($student, $subject));
 }
-?>
+
+function getStudentPoints() {
+  global $dbc;
+
+  $stmt = $dbc->prepare("SELECT * FROM Bet ORDER BY better, date");
+  $stmt->execute();
+  $rawBets = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  $bets = [];
+  $currentBetter = null;
+  $betterBets = [];
+  $currentDate = null;
+  $betDates = [];
+  foreach($rawBets as $bet) {
+    if($bet["date"] !== $currentDate || $bet["better"] !== $currentBetter) {
+      if($currentDate !== null) $betterBets[$currentDate] = $betDates;
+      $betDates = [];
+      $currentDate = $bet["date"];
+    }
+    if($bet["better"] !== $currentBetter) {
+      if($currentBetter !== null) $bets[$currentBetter] = $betterBets;
+      $betterBets = [];
+      $currentBetter = $bet["better"];
+    }
+    array_push($betDates, $bet["student"]);
+  }
+  $betterBets[$currentDate] = $betDates;
+  $bets[$currentBetter] = $betterBets;
+
+  $stmt = $dbc->prepare("SELECT * FROM Result ORDER BY date");
+  $stmt->execute();
+  $rawResults = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  $results = [];
+  $currentDate = null;
+  $resultDates = [];
+  foreach($rawResults as $result) {
+    if($result["date"] !== $currentDate) {
+      if($currentDate !== null) $results[$currentDate] = $resultDates;
+      $resultDates = [];
+      $currentDate = $result["date"];
+    }
+    array_push($resultDates, $result["student"]);
+  }
+  $results[$currentDate] = $resultDates;
+
+  $pointsRaw = json_decode(file_get_contents("../assets/config.json"), true)["maxPoints"];
+  $points = [];
+  foreach(array_keys($pointsRaw) as $key) {
+    array_push($points, $pointsRaw[$key]);
+  }
+
+  $ret = [];
+  $totalStudents = query("SELECT COUNT(*) as totalStudents FROM Student")["totalStudents"];
+  $betSpots = query("SELECT betspots FROM Subject WHERE name='ING'")["betspots"];
+  foreach(array_keys($bets) as $student) {
+    $earnedPoints = 0;
+    $closestDate = null;
+    $bettableStudents = $totalStudents;
+    /**echo "\n\n\n\n\n$student\n";/**/
+    foreach(array_keys($bets[$student]) as $betDate) {
+      $closestResultDate = null;
+      for($i=0; $i < count(array_keys($results)); $i++) {
+        $resultDate = array_keys($results)[$i];
+        if($betDate < $resultDate) {
+          $closestResultDate = $resultDate;
+          break;
+        }
+      }
+      if($closestResultDate === null) continue;
+
+      $betsWon = getElementsInCommon($bets[$student][$betDate], $results[$closestResultDate]);
+      if($betsWon > 0) {
+        $pointsWon = $points[$betsWon-1];
+        $proportionalPointsWon = floor(($bettableStudents-$betSpots) /
+            ($totalStudents-$betSpots) * $pointsWon);
+        $proportionalPointsWon = $proportionalPointsWon > 0 ? $proportionalPointsWon : 0;
+        $earnedPoints += $proportionalPointsWon;
+        /**echo "$totalStudents\n";/**/
+      }
+      $bettableStudents -= count($results[$closestResultDate]);
+    }
+    $ret[$student] = $earnedPoints;
+  }
+  return json_encode($ret);
+}
+
+function getElementsInCommon($arr1, $arr2) {
+  $ret = 0;
+  foreach($arr1 as $value1) {
+    foreach($arr2 as $value2) {
+      if($value1 === $value2) $ret++;
+    }
+  }
+  return $ret;
+}
+
+function query($q) {
+  global $dbc;
+  $stmt = $dbc->prepare($q);
+  $stmt->execute();
+  return $stmt->fetch(PDO::FETCH_ASSOC);
+}

@@ -1,6 +1,7 @@
 let selectData, maxPoints, betHistory, canBet, resultHistory;
 let studentNumber;
 let betters, selectedIndexes;
+let pointData;
 
 /* Setup Functions */
 
@@ -232,22 +233,13 @@ function makeContent(subject) {
 
     ret.appendChild(makeDivider());
   }
-  else {
-    /*
-    let row = document.createElement("DIV");
-    row.className = "row";
-    row.style.paddingTop = "20px";
-    ret.appendChild(row);
 
-    let column = document.createElement("DIV");
-    column.className = "col s12 center";
-    row.appendChild(column);
-
-    let text = document.createElement("H4");
-    text.innerHTML = "Grazie per aver scommesso";
-    column.appendChild(text);
-    */
-  }
+  let resultsBtn = document.createElement("DIV");
+  resultsBtn.className="center-align";
+  resultsBtn.innerHTML= `
+    <a href="results.php"><div class="btn">RISULTATI</div></a>
+  `;
+  ret.appendChild(resultsBtn);
 
   ret.appendChild(makePointsTable(subject));
 
@@ -314,7 +306,8 @@ function makePointsTable(subject) {
     }
     let studentsLeft = studentNumber - studentsDone;
     let betSpots = selectData[subject]["betspots"];
-    let points = Math.floor((studentsLeft-betSpots) / (studentNumber-betSpots) * maxPoints[pointType]);
+    let pointsWon = Math.floor((studentsLeft-betSpots) / (studentNumber-betSpots) * maxPoints[pointType]);
+    let points = pointsWon > 0 ? pointsWon : 0;
     // (y-y0)/(y1-y0) = (x-x0)/(x-x1), formula inversa per y
 
     let row = [pointType, points+"PT"];
@@ -449,7 +442,8 @@ function getPoints(subject, bets, results) {
           let wins = getMatches(results[Object.keys(results)[k]], bets[Object.keys(bets)[i]]);
           if(wins > 0){
             let pointType = Object.keys(maxPoints)[wins-1];
-            ret += Math.floor((studentsLeft-betSpots) / (studentNumber-betSpots) * maxPoints[pointType]);
+            let pointsWon = Math.floor((studentsLeft-betSpots) / (studentNumber-betSpots) * maxPoints[pointType])
+            ret += pointsWon > 0 ? pointsWon : 0;
             // (y-y0)/(y1-y0) = (x-x0)/(x-x1), formula inversa per y
           }
           studentsLeft -= results[Object.keys(results)[k]].length;
